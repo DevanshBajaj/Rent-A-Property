@@ -1,45 +1,41 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import { useState } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import Houses from "./components/Houses";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+
+const theme = createTheme({
+	palette: {
+		primary: {
+			main: "#26d7ab",
+			nav: "#efefef",
+		},
+		secondary: {
+			main: "#5367FF",
+		},
+		background: {
+			default: "#ffffff",
+			paper: "#fff",
+		},
+		divider: "#ecedef",
+		text: {
+			primary: "#44475b",
+			secondary: "#7c7e8c",
+			disabled: "#b0b2ba",
+		},
+	},
+});
 
 function App() {
-  const [count, setCount] = useState(0)
+	const [count, setCount] = useState(0);
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
-  )
+	return (
+		<ThemeProvider theme={theme}>
+			<div className="App">
+				<Houses />
+			</div>
+		</ThemeProvider>
+	);
 }
 
-export default App
+export default App;
