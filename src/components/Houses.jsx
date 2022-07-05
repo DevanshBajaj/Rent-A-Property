@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 
-import { Button, Grid, MenuItem, TextField } from "@mui/material";
+import { Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
 
 import HouseList from "./HouseList";
+import { DesktopDatePicker } from "@mui/x-date-pickers";
 
 const NavContainer = styled("div")`
 	display: flex;
 	flex-direction: row;
-	justify-content: flex-end;
+	justify-content: flex-start;
 	gap: 2rem;
 	margin-bottom: 2rem;
 	width: 100%;
@@ -28,52 +29,56 @@ const Styledbutton = styled(Button)`
 	border-radius: 12px;
 	padding: 0.2rem 2rem;
 `;
-const cities = ["all", "Delhi", "Noida", "Mumbai"];
-const categories = ["all", "houses", "studio", "offices"];
+const cities = [
+	{ value: "delhi", label: "Delhi" },
+	{ value: "noida", label: "Noida" },
+	{ value: "mumbai", label: "Mumbai" },
+];
+const categories = [
+	{ value: "houses", label: "Houses" },
+	{ value: "studio", label: "Studio" },
+	{ value: "offices", label: "Offices" },
+];
 const prices = [
-	{ value: "6000", label: ">=6000" },
-	{ value: "7000", label: ">=7000" },
-	{ value: "9000", label: ">=8000" },
+	{ value: [5000, 6000], label: "$5000-6000" },
+	{ value: [6000, 7000], label: "$6000-7000" },
+	{ value: [7000, 8000], label: "$7000-8000" },
 ];
 
 const Houses = () => {
 	const [houses, setHouses] = useState([]);
-	const [price, setPrice] = useState([]);
 	const [filter, setFilter] = useState([]);
-	const [searchValue, setSearchValue] = useState("");
+	const [searchValue, setSearchValue] = useState([]);
+	const [date, setDate] = useState(new Date("07/05/2022"));
+	const [price, setPrice] = useState("");
+	const [city, setCity] = useState("");
+	const [category, setCategory] = useState("");
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(false);
 	const [disableSearch, setDisableSearch] = useState(true);
-	const [city, setCity] = useState("");
-
-	const [category, setCategory] = useState("");
 
 	useEffect(() => {
-		if (category != "" && category != "all") {
-			const filteredData = houses?.response.filter((bank) =>
-				bank.category.toLowerCase().includes(category.toLowerCase())
+		console.log(searchValue);
+		if (searchValue != "") {
+			const filteredHouses = houses?.response?.filter(
+				(house) =>
+					house.category === searchValue.category &&
+					house.city === searchValue.city &&
+					house.rentzestimate > searchValue.price[0] &&
+					house.rentzestimate < searchValue.price[1]
 			);
-			console.log(filteredData);
-			setFilter(filteredData);
-		} else {
-			setFilter(houses);
+			console.log(filteredHouses);
+			setFilter(filteredHouses);
 		}
-	}, [category]);
+	}, [searchValue]);
 
-	useEffect(() => {
-		if (city != "" && city != "all") {
-			const filteredCities = houses?.response.filter((bank) =>
-				bank.city.toLowerCase().includes(city.toLowerCase())
-			);
-			console.log(filteredCities);
-			setFilter(filteredCities);
-		} else {
-			setFilter(houses);
-		}
-	}, [city]);
 	useEffect(() => {
 		fetchData();
-	}, [city]);
+	}, []);
+
+	useEffect(() => {
+		setDisableSearch(!category || !city || !price);
+	}, [category, city, price]);
 
 	const fetchData = async () => {
 		try {
@@ -97,10 +102,13 @@ const Houses = () => {
 		}
 	};
 
+	// 2022-07-04T18:30:00.000
+	// '2022-07-05T18:30:00.000
+	// '2022-07-06T18:30:00.000Z'
+	// '2022-07-07T18:30:00.000Z'
+
 	const handleCategoryChange = (e) => {
 		setCategory(e.target.value);
-
-		// setCategory(value);
 	};
 
 	const handleCityChange = (e) => {
@@ -111,18 +119,17 @@ const Houses = () => {
 		setPrice(e.target.value);
 	};
 
-	// const searchItems = (searchInput) => {
-	// 	setSearchValue(searchInput);
-	// 	if (type !== "") {
-	// 		const filteredData = banks?.response.filter((bank) =>
-	// 			bank.category.toLowerCase().includes(type.toLowerCase())
-	// 		);
-	// 		setFilter(filteredData);
-	// 		console.log(filteredData);
-	// 	} else {
-	// 		setFilter(banks);
-	// 	}
-	// };
+	const handleDateChange = (e) => {
+		setDate(e);
+		console.log(date);
+	};
+	const searchItems = () => {
+		setSearchValue({
+			city: city,
+			price: price,
+			category: category,
+		});
+	};
 
 	return (
 		<>
@@ -137,12 +144,21 @@ const Houses = () => {
 				>
 					{cities.map((citydown, idx) => {
 						return (
-							<MenuItem value={citydown} key={idx}>
-								{citydown}
+							<MenuItem value={citydown.value} key={idx}>
+								{citydown.label}
 							</MenuItem>
 						);
 					})}
 				</TextField>
+				<DesktopDatePicker
+					label="Date desktop"
+					inputFormat="MM/dd/yyyy"
+					minDate={new Date("07/05/2022")}
+					maxDate={new Date("07/08/2022")}
+					value={date}
+					onChange={handleDateChange}
+					renderInput={(params) => <TextField {...params} />}
+				/>
 				<TextField
 					id="Prices"
 					select
@@ -169,17 +185,16 @@ const Houses = () => {
 				>
 					{categories.map((category, idx) => {
 						return (
-							<MenuItem key={idx} value={category}>
-								{category}
+							<MenuItem key={idx} value={category.value}>
+								{category.label}
 							</MenuItem>
 						);
 					})}
 				</TextField>
 				<Styledbutton
 					variant="contained"
-					onClick={() => {
-						alert("clicked");
-					}}
+					disabled={disableSearch}
+					onClick={searchItems}
 				>
 					Search
 				</Styledbutton>
@@ -204,6 +219,7 @@ const Houses = () => {
 										name={house.name}
 										image={house.images[0]}
 										street={house.street}
+										city={house.city}
 										rent={house.rentzestimate}
 										bedrooms={house.bedrooms}
 										bathrooms={house.bathrooms}
@@ -225,6 +241,7 @@ const Houses = () => {
 										name={house.name}
 										image={house.images[0]}
 										street={house.street}
+										city={house.city}
 										rent={house.rentzestimate}
 										bedrooms={house.bedrooms}
 										bathrooms={house.bathrooms}
@@ -236,7 +253,7 @@ const Houses = () => {
 					)}
 				</Grid>
 			) : (
-				<div>loading</div>
+				<div>loading...</div>
 			)}
 		</>
 	);
