@@ -3,15 +3,14 @@ import logo from "./logo.svg";
 import "./App.css";
 import Houses from "./components/Houses";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import Navbar from "./components/Navbar";
+import { Typography } from "@mui/material";
 
 const theme = createTheme({
 	palette: {
 		primary: {
-			main: "#26d7ab",
-			nav: "#efefef",
-		},
-		secondary: {
 			main: "#5367FF",
+			nav: "#efefef",
 		},
 		background: {
 			default: "#ffffff",
@@ -31,7 +30,11 @@ function App() {
 
 	return (
 		<ThemeProvider theme={theme}>
+			<Navbar />
 			<div className="App">
+				<Typography variant="h4" textAlign="left">
+					Search Properties For Rent
+				</Typography>
 				<Houses />
 			</div>
 		</ThemeProvider>
