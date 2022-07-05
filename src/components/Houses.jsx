@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 
-import { Button, Grid, MenuItem, TextField, Typography } from "@mui/material";
+import { Button, Grid, MenuItem, Stack, TextField } from "@mui/material";
 
 import HouseList from "./HouseList";
 import { DesktopDatePicker } from "@mui/x-date-pickers";
@@ -24,11 +24,13 @@ const Styledbutton = styled(Button)`
 	align-items: center;
 	box-shadow: none;
 	color: #fff;
-	margin: 1rem;
+	gap: 0.3rem;
+	margin: 0.3rem;
 	font-size: 0.8rem;
-	border-radius: 12px;
+	border-radius: 6px;
 	padding: 0.2rem 2rem;
 `;
+
 const cities = [
 	{ value: "delhi", label: "Delhi" },
 	{ value: "noida", label: "Noida" },
@@ -54,9 +56,11 @@ const Houses = () => {
 	const [city, setCity] = useState("");
 	const [category, setCategory] = useState("");
 	const [loading, setLoading] = useState(true);
+	const [reset, setReset] = useState(false);
 	const [error, setError] = useState(false);
 	const [disableSearch, setDisableSearch] = useState(true);
 
+	// To filter data when search value is updated
 	useEffect(() => {
 		console.log(searchValue);
 		if (searchValue != "") {
@@ -65,21 +69,25 @@ const Houses = () => {
 					house.category === searchValue.category &&
 					house.city === searchValue.city &&
 					house.rentzestimate > searchValue.price[0] &&
-					house.rentzestimate < searchValue.price[1]
+					house.rentzestimate < searchValue.price[1] &&
+					house.date === searchValue.date
 			);
 			console.log(filteredHouses);
 			setFilter(filteredHouses);
 		}
 	}, [searchValue]);
 
+	//for fetching data when category changes to update reset search
 	useEffect(() => {
 		fetchData();
-	}, []);
+	}, [reset]);
 
+	//For disabling search with category, city, price as dependency
 	useEffect(() => {
 		setDisableSearch(!category || !city || !price);
 	}, [category, city, price]);
 
+	//Fetch listing data from JSON file using async fetch
 	const fetchData = async () => {
 		try {
 			setLoading(true);
@@ -96,39 +104,52 @@ const Houses = () => {
 				throw new Error("response not OK");
 			}
 			setLoading(false);
+			setReset(false);
 		} catch (e) {
 			setError(true);
 			console.log(e);
 		}
 	};
 
-	// 2022-07-04T18:30:00.000
-	// '2022-07-05T18:30:00.000
-	// '2022-07-06T18:30:00.000Z'
-	// '2022-07-07T18:30:00.000Z'
-
+	//onChange function for Categories
 	const handleCategoryChange = (e) => {
 		setCategory(e.target.value);
 	};
 
+	//onChange function for Cities
 	const handleCityChange = (e) => {
 		setCity(e.target.value);
 	};
 
+	//onChange function for Price
 	const handlePriceChange = (e) => {
 		setPrice(e.target.value);
 	};
 
+	//onChange function for Cities
 	const handleDateChange = (e) => {
 		setDate(e);
-		console.log(date);
 	};
+
+	//Search parameters for searching based on filters
 	const searchItems = () => {
+		const date1 = new Date(date).toISOString();
+		console.log(date1);
 		setSearchValue({
 			city: city,
 			price: price,
 			category: category,
+			date: date1,
 		});
+	};
+
+	//RESET DROPDOWN TO SHOW ALL LISTINGS
+	const resetItems = () => {
+		setDate(new Date("07/05/2022"));
+		setPrice("");
+		setCategory("");
+		setCity("");
+		setReset(true);
 	};
 
 	return (
@@ -151,19 +172,19 @@ const Houses = () => {
 					})}
 				</TextField>
 				<DesktopDatePicker
-					label="Date desktop"
+					label="Move-In Date"
 					inputFormat="MM/dd/yyyy"
 					minDate={new Date("07/05/2022")}
-					maxDate={new Date("07/08/2022")}
+					maxDate={new Date("07/06/2022")}
 					value={date}
 					onChange={handleDateChange}
 					renderInput={(params) => <TextField {...params} />}
 				/>
 				<TextField
-					id="Prices"
+					id="Price Range"
 					select
 					value={price}
-					label="Prices"
+					label="Price Range"
 					onChange={handlePriceChange}
 					helperText="Please select your Price Range"
 				>
@@ -191,13 +212,18 @@ const Houses = () => {
 						);
 					})}
 				</TextField>
-				<Styledbutton
-					variant="contained"
-					disabled={disableSearch}
-					onClick={searchItems}
-				>
-					Search
-				</Styledbutton>
+				<Stack>
+					<Styledbutton
+						variant="contained"
+						disabled={disableSearch}
+						onClick={searchItems}
+					>
+						Search
+					</Styledbutton>
+					<Styledbutton variant="contained" onClick={resetItems}>
+						Reset Search
+					</Styledbutton>
+				</Stack>
 			</NavContainer>
 			{!loading ? (
 				<Grid
@@ -253,7 +279,7 @@ const Houses = () => {
 					)}
 				</Grid>
 			) : (
-				<div>loading...</div>
+				<div>Loading.....</div>
 			)}
 		</>
 	);
