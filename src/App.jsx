@@ -6,6 +6,9 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Navbar from "./components/Navbar";
 import { Typography } from "@mui/material";
 
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+
 const theme = createTheme({
 	palette: {
 		primary: {
@@ -26,17 +29,17 @@ const theme = createTheme({
 });
 
 function App() {
-	const [count, setCount] = useState(0);
-
 	return (
 		<ThemeProvider theme={theme}>
 			<Navbar />
-			<div className="App">
-				<Typography variant="h4" textAlign="left">
-					Search Properties For Rent
-				</Typography>
-				<Houses />
-			</div>
+			<LocalizationProvider dateAdapter={AdapterDateFns}>
+				<div className="App">
+					<Typography variant="h4" textAlign="left">
+						Search Properties For Rent
+					</Typography>
+					<Houses />
+				</div>
+			</LocalizationProvider>
 		</ThemeProvider>
 	);
 }
