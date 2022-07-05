@@ -56,7 +56,7 @@ const CssTextField = styled(TextField)({
 });
 
 const HouseList = (props) => {
-	const { name, street, sqft, bathrooms, bedrooms, image, rent } = props;
+	const { name, street, sqft, bathrooms, bedrooms, image, rent, city } = props;
 	return (
 		<Grid item xs={6} sm={4} md={4}>
 			<Card sx={{ borderRadius: 2 }}>
@@ -72,7 +72,7 @@ const HouseList = (props) => {
 							{name}
 						</Typography>
 						<Typography gutterBottom variant="body1" component="div">
-							{street}
+							{street}, {city}
 						</Typography>
 						<Typography variant="subtitle1" color="primary.main" mb={1}>
 							${rent}
