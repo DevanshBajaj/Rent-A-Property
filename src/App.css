@@ -7,6 +7,16 @@
   padding: 2rem;
 }
 
+@media screen and (max-width: 600px) {
+  .App {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin: 1rem 1rem;
+    padding: 2rem;
+  }
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;

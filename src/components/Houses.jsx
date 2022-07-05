@@ -1,32 +1,9 @@
 import { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
-import Select from "react-select";
 
-import {
-	Card,
-	CardContent,
-	CardMedia,
-	Typography,
-	CardActionArea,
-	Grid,
-	TableHead,
-	TableRow,
-	MenuItem,
-	TextField,
-	InputAdornment,
-	Skeleton,
-	Paper,
-	Chip,
-	Stack,
-	Divider,
-} from "@mui/material";
-import { Bed, Category, Search } from "@mui/icons-material";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
-import { useNavigate } from "react-router-dom";
-import BedIcon from "@mui/icons-material/Bed";
-import BathtubIcon from "@mui/icons-material/Bathtub";
-import ImageAspectRatioIcon from "@mui/icons-material/ImageAspectRatio";
+import { Button, Grid, MenuItem, TextField } from "@mui/material";
+
+import HouseList from "./HouseList";
 
 const NavContainer = styled("div")`
 	display: flex;
@@ -40,60 +17,60 @@ const NavContainer = styled("div")`
 		align-items: flex-start;
 	}
 `;
-const CssTextField = styled(TextField)({
-	"& label.Mui-focused": {
-		color: "primary",
-	},
-	"& .MuiInput-underline:after": {
-		borderBottomColor: "grey",
-	},
-	"& .MuiOutlinedInput-root": {
-		"&:hover fieldset": {
-			borderColor: "secondary",
-		},
-		"&.Mui-focused fieldset": {
-			borderColor: "primary",
-		},
-	},
-});
-
-const cities = [
-	{ value: "delhi", label: "Delhi" },
-	{ value: "San Francisco", label: "San Francisco" },
-	"Noida",
+const Styledbutton = styled(Button)`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-shadow: none;
+	color: #fff;
+	margin: 1rem;
+	font-size: 0.8rem;
+	border-radius: 12px;
+	padding: 0.2rem 2rem;
+`;
+const cities = ["all", "Delhi", "Noida", "Mumbai"];
+const categories = ["all", "houses", "studio", "offices"];
+const prices = [
+	{ value: "6000", label: ">=6000" },
+	{ value: "7000", label: ">=7000" },
+	{ value: "9000", label: ">=8000" },
 ];
-const categories = ["houses", "studio", "offices"];
-
-// const categories = [
-// 	{ value: "houses", label: "Houses" },
-// 	{ value: "studio", label: "Studio" },
-// 	{ value: "offices", label: "Offices" },
-// ];
-const prices = ["5000-6000", "6000-7000", "8000-9000", "9000-10000"];
 
 const Houses = () => {
-	const [banks, setBanks] = useState([]);
+	const [houses, setHouses] = useState([]);
+	const [price, setPrice] = useState([]);
 	const [filter, setFilter] = useState([]);
 	const [searchValue, setSearchValue] = useState("");
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(false);
 	const [disableSearch, setDisableSearch] = useState(true);
-	const [city, setCity] = useState("MUMBAI");
+	const [city, setCity] = useState("");
 
 	const [category, setCategory] = useState("");
 
-	// const handleCity = (event) => {
-	// 	setCity(event.target.value);
-	// 	console.log(city);
-	// };
-	// const handleType = (event) => {
-	// 	setCategory(event.target.value);
-	// };
+	useEffect(() => {
+		if (category != "" && category != "all") {
+			const filteredData = houses?.response.filter((bank) =>
+				bank.category.toLowerCase().includes(category.toLowerCase())
+			);
+			console.log(filteredData);
+			setFilter(filteredData);
+		} else {
+			setFilter(houses);
+		}
+	}, [category]);
 
-	// useEffect(() => {
-	// 	setDisableSearch(!categories || !city);
-	// }, [category, city]);
-
+	useEffect(() => {
+		if (city != "" && city != "all") {
+			const filteredCities = houses?.response.filter((bank) =>
+				bank.city.toLowerCase().includes(city.toLowerCase())
+			);
+			console.log(filteredCities);
+			setFilter(filteredCities);
+		} else {
+			setFilter(houses);
+		}
+	}, [city]);
 	useEffect(() => {
 		fetchData();
 	}, [city]);
@@ -101,16 +78,15 @@ const Houses = () => {
 	const fetchData = async () => {
 		try {
 			setLoading(true);
-
 			const res = await fetch("./db.json");
 			if (res.ok) {
 				const result = await res.json();
 				const data = {
 					response: result,
 				};
-				setBanks(data);
+				setHouses(data);
 				setFilter(data);
-				console.log(banks);
+				console.log(houses);
 			} else {
 				throw new Error("response not OK");
 			}
@@ -122,35 +98,19 @@ const Houses = () => {
 	};
 
 	const handleCategoryChange = (e) => {
-		const value = e.target.value;
 		setCategory(e.target.value);
+
 		// setCategory(value);
-		console.log(category);
-		if (category !== "" && value !== "") {
-			const filteredData = banks?.response.filter((bank) =>
-				bank.category.toLowerCase().includes(category.toLowerCase())
-			);
-			console.log(category);
-			setFilter(filteredData);
-			console.log(filter);
-		} else {
-			setFilter(banks);
-		}
 	};
 
-	// const filterItems = (categoryInput) => {
-	// 	setCategory(categoryInput);
-	// 	if (category !== "") {
-	// 		console.log(category);
-	// 		const filteredData = banks?.response.filter((bank) =>
-	// 			bank.category.toLowerCase().includes(category.toLowerCase())
-	// 		);
-	// 		setFilter(filteredData);
-	// 		console.log(filter);
-	// 	} else {
-	// 		setFilter(banks);
-	// 	}
-	// };
+	const handleCityChange = (e) => {
+		setCity(e.target.value);
+	};
+
+	const handlePriceChange = (e) => {
+		setPrice(e.target.value);
+	};
+
 	// const searchItems = (searchInput) => {
 	// 	setSearchValue(searchInput);
 	// 	if (type !== "") {
@@ -167,12 +127,12 @@ const Houses = () => {
 	return (
 		<>
 			<NavContainer>
-				{/* <TextField
+				<TextField
 					id="City"
 					select
 					value={city}
 					label="City"
-					onChange={handleCity}
+					onChange={handleCityChange}
 					helperText="Please select your city"
 				>
 					{cities.map((citydown, idx) => {
@@ -182,13 +142,29 @@ const Houses = () => {
 							</MenuItem>
 						);
 					})}
-				</TextField> */}
+				</TextField>
+				<TextField
+					id="Prices"
+					select
+					value={price}
+					label="Prices"
+					onChange={handlePriceChange}
+					helperText="Please select your Price Range"
+				>
+					{prices.map((usd, idx) => {
+						return (
+							<MenuItem value={usd.value} key={idx}>
+								{usd.label}
+							</MenuItem>
+						);
+					})}
+				</TextField>
 				<TextField
 					id="Categories"
 					select
 					value={category}
 					label="Category"
-					onChange={(e) => filterItems(e.target.value)}
+					onChange={handleCategoryChange}
 					helperText="Select search category"
 				>
 					{categories.map((category, idx) => {
@@ -199,103 +175,68 @@ const Houses = () => {
 						);
 					})}
 				</TextField>
-				{/* {!disableSearch && (
-					<CssTextField
-						id="outlined-basic"
-						label="Search"
-						variant="outlined"
-						InputProps={{
-							endAdornment: (
-								<InputAdornment position="end">
-									<Search />
-								</InputAdornment>
-							),
-						}}
-						disabled={disableSearch}
-						onChange={(e) => searchItems(e.target.value)}
-					/>
-				)} */}
+				<Styledbutton
+					variant="contained"
+					onClick={() => {
+						alert("clicked");
+					}}
+				>
+					Search
+				</Styledbutton>
 			</NavContainer>
-			{/* <TextField
-				id="Categories"
-				select
-				value={category}
-				label="Category"
-				onChange={handleCategoryChange}
-				helperText="Select search category"
-			>
-				{categories.map((type, idx) => {
-					return (
-						<MenuItem key={idx} value={type}>
-							{type}
-						</MenuItem>
-					);
-				})}
-			</TextField> */}
-			{loading ? (
-				<div>loading...</div>
-			) : (
+			{!loading ? (
 				<Grid
 					container
 					spacing={{ xs: 2, md: 3 }}
 					columns={{ xs: 4, sm: 8, md: 12 }}
 				>
-					{banks?.response?.map((house, id) => {
-						return (
-							<Grid item xs={2} sm={4} md={4}>
-								<Card sx={{ borderRadius: 2 }}>
-									<CardActionArea>
-										<CardMedia
-											component="img"
-											height="140"
-											image={house.images[0]}
-											alt="rental house"
-										/>
-										<CardContent>
-											<Typography gutterBottom variant="h6" component="div">
-												{house.name}
-											</Typography>
-											<Typography gutterBottom variant="body1" component="div">
-												{house.street}
-											</Typography>
-											<Typography
-												variant="subtitle1"
-												color="primary.main"
-												mb={1}
-											>
-												${house.rentzestimate}
-												<Typography variant="span" color="text.secondary">
-													/month
-												</Typography>
-											</Typography>
-											<Divider />
-											<Stack direction="row" spacing={2} mt={2}>
-												<Stack direction="row" spacing={1}>
-													<Bed fontSize="small" />
-													<Typography variant="body2">
-														{house.bedrooms}
-													</Typography>
-												</Stack>
-												<Stack direction="row" spacing={1}>
-													<BathtubIcon fontSize="small" />
-													<Typography variant="body2">
-														{house.bathrooms}
-													</Typography>
-												</Stack>
-												<Stack direction="row" spacing={1}>
-													<ImageAspectRatioIcon fontSize="small" />
-													<Typography variant="body2">
-														{house.finishedSqFt} sqft.
-													</Typography>
-												</Stack>
-											</Stack>
-										</CardContent>
-									</CardActionArea>
-								</Card>
-							</Grid>
-						);
-					})}
+					{filter.length >= 1 ? (
+						<Grid
+							container
+							justifyContent="center"
+							alignItems="flex-start"
+							spacing={4}
+						>
+							{filter?.map((house, id) => {
+								return (
+									<HouseList
+										key={id}
+										name={house.name}
+										image={house.images[0]}
+										street={house.street}
+										rent={house.rentzestimate}
+										bedrooms={house.bedrooms}
+										bathrooms={house.bathrooms}
+										sqft={house.finishedSqFt}
+									/>
+								);
+							})}
+						</Grid>
+					) : (
+						<Grid
+							container
+							spacing={{ xs: 2, md: 3 }}
+							columns={{ xs: 4, sm: 8, md: 12 }}
+						>
+							{houses?.response?.map((house, id) => {
+								return (
+									<HouseList
+										key={id}
+										name={house.name}
+										image={house.images[0]}
+										street={house.street}
+										rent={house.rentzestimate}
+										bedrooms={house.bedrooms}
+										bathrooms={house.bathrooms}
+										sqft={house.finishedSqFt}
+									/>
+								);
+							})}
+						</Grid>
+					)}
 				</Grid>
+			) : (
+				<div>loading</div>
 			)}
 		</>
 	);
