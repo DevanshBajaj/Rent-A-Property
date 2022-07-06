@@ -1,5 +1,3 @@
-import { styled } from "@mui/material/styles";
-
 import {
 	Card,
 	CardContent,
@@ -7,56 +5,34 @@ import {
 	Typography,
 	CardActionArea,
 	Grid,
-	TableHead,
-	TableRow,
-	MenuItem,
-	TextField,
-	InputAdornment,
-	Skeleton,
-	Paper,
-	Chip,
 	Stack,
 	Divider,
 } from "@mui/material";
-import { Bed, Category, Search } from "@mui/icons-material";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
-import { useNavigate } from "react-router-dom";
-import BedIcon from "@mui/icons-material/Bed";
-import BathtubIcon from "@mui/icons-material/Bathtub";
-import ImageAspectRatioIcon from "@mui/icons-material/ImageAspectRatio";
-
-const NavContainer = styled("div")`
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-end;
-	gap: 2rem;
-	margin-bottom: 2rem;
-	width: 100%;
-	@media (max-width: 620px) {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-`;
-const CssTextField = styled(TextField)({
-	"& label.Mui-focused": {
-		color: "primary",
-	},
-	"& .MuiInput-underline:after": {
-		borderBottomColor: "grey",
-	},
-	"& .MuiOutlinedInput-root": {
-		"&:hover fieldset": {
-			borderColor: "secondary",
-		},
-		"&.Mui-focused fieldset": {
-			borderColor: "primary",
-		},
-	},
-});
+import { Bed, Bathtub, ImageAspectRatio } from "@mui/icons-material";
 
 const HouseList = (props) => {
-	const { name, street, sqft, bathrooms, bedrooms, image, rent, city } = props;
+	//Props from parent components
+	const {
+		name,
+		street,
+		sqft,
+		bathrooms,
+		bedrooms,
+		image,
+		rent,
+		city,
+		category,
+		date,
+	} = props;
+
+	//Format date to more readable form
+	const dateFormat = new Date(date).toLocaleDateString();
+
+	//function to capitalize first letter of string
+	const capitalize = (string) => {
+		return string.replace(/^./, (str) => str.toUpperCase());
+	};
+
 	return (
 		<Grid item xs={6} sm={4} md={4}>
 			<Card sx={{ borderRadius: 2 }}>
@@ -72,12 +48,24 @@ const HouseList = (props) => {
 							{name}
 						</Typography>
 						<Typography gutterBottom variant="body1" component="div">
-							{street}, {city}
+							{street}, {capitalize(city)}
 						</Typography>
 						<Typography variant="subtitle1" color="primary.main" mb={1}>
 							${rent}
 							<Typography variant="span" color="text.secondary">
 								/month
+							</Typography>
+						</Typography>
+						<Typography variant="subtitle1" color="text.primary">
+							Move-In date: &nbsp;
+							<Typography variant="span" color="primary.main" mb={1}>
+								{dateFormat}
+							</Typography>
+						</Typography>
+						<Typography variant="subtitle1" color="text.primary">
+							Category: &nbsp;
+							<Typography variant="span" color="primary.main" mb={1}>
+								{capitalize(category)}
 							</Typography>
 						</Typography>
 						<Divider />
@@ -87,11 +75,11 @@ const HouseList = (props) => {
 								<Typography variant="body2">{bedrooms}</Typography>
 							</Stack>
 							<Stack direction="row" spacing={1}>
-								<BathtubIcon fontSize="small" />
+								<Bathtub fontSize="small" />
 								<Typography variant="body2">{bathrooms}</Typography>
 							</Stack>
 							<Stack direction="row" spacing={1}>
-								<ImageAspectRatioIcon fontSize="small" />
+								<ImageAspectRatio fontSize="small" />
 								<Typography variant="body2">{sqft} sqft.</Typography>
 							</Stack>
 						</Stack>

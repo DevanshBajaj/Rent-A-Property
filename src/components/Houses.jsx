@@ -225,7 +225,8 @@ const Houses = () => {
 					</Styledbutton>
 				</Stack>
 			</NavContainer>
-			{!loading ? (
+
+			{!loading && !error ? (
 				<Grid
 					container
 					spacing={{ xs: 2, md: 3 }}
@@ -250,6 +251,8 @@ const Houses = () => {
 										bedrooms={house.bedrooms}
 										bathrooms={house.bathrooms}
 										sqft={house.finishedSqFt}
+										category={house.category}
+										date={house.date}
 									/>
 								);
 							})}
@@ -272,6 +275,8 @@ const Houses = () => {
 										bedrooms={house.bedrooms}
 										bathrooms={house.bathrooms}
 										sqft={house.finishedSqFt}
+										category={house.category}
+										date={house.date}
 									/>
 								);
 							})}
