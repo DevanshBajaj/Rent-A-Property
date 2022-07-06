@@ -1,5 +1,5 @@
 {
-	"name": "rent-a-casa",
+	"name": "rent-a-house",
 	"private": true,
 	"version": "0.0.0",
 	"scripts": {
@@ -9,7 +9,6 @@
 	},
 	"dependencies": {
 		"@date-io/date-fns": "^2.14.0",
-		"@date-io/moment": "^2.14.0",
 		"@emotion/react": "^11.9.3",
 		"@emotion/styled": "^11.9.3",
 		"@mui/icons-material": "^5.8.4",
@@ -19,8 +18,7 @@
 		"date-fns": "^2.28.0",
 		"react": "^18.0.0",
 		"react-dom": "^18.0.0",
-		"react-router-dom": "^6.3.0",
-		"react-select": "^5.4.0"
+		"react-router-dom": "^6.3.0"
 	},
 	"devDependencies": {
 		"@types/react": "^18.0.0",
