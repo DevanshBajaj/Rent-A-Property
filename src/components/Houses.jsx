@@ -62,7 +62,6 @@ const Houses = () => {
 
 	// To filter data when search value is updated
 	useEffect(() => {
-		console.log(searchValue);
 		if (searchValue != "") {
 			const filteredHouses = houses?.response?.filter(
 				(house) =>
@@ -72,7 +71,6 @@ const Houses = () => {
 					house.rentzestimate < searchValue.price[1] &&
 					house.date === searchValue.date
 			);
-			console.log(filteredHouses);
 			setFilter(filteredHouses);
 		}
 	}, [searchValue]);
@@ -99,7 +97,6 @@ const Houses = () => {
 				};
 				setHouses(data);
 				setFilter(data);
-				console.log(houses);
 			} else {
 				throw new Error("response not OK");
 			}
@@ -107,7 +104,6 @@ const Houses = () => {
 			setReset(false);
 		} catch (e) {
 			setError(true);
-			console.log(e);
 		}
 	};
 
@@ -134,7 +130,6 @@ const Houses = () => {
 	//Search parameters for searching based on filters
 	const searchItems = () => {
 		const date1 = new Date(date).toISOString();
-		console.log(date1);
 		setSearchValue({
 			city: city,
 			price: price,
